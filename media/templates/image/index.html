@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    {% load static %}  <!-- static 태그 로드 -->
+    <script src="{% static 'image/script.js' %}"></script> <!-- script.js 경로 -->
+</head>
+<body>
+    <h1>Image Gallery</h1>
+    <div id="image-container"></div> <!-- 이미지가 표시될 곳 -->
+    <script>
+        // 페이지 로드 시 이미지를 가져오는 함수
+        window.onload = function() {
+            fetch('http://127.0.0.1:8000/api/images/')
+                .then(response => response.json())
+                .then(data => {
+                    const preview = document.getElementById('image-container');
+                    data.forEach(image => {
+                        const img = document.createElement('img');
+                        img.src = image.image; // DRF에서 받은 이미지 URL
+                        img.style.width = '200px'; // 이미지 크기 조절
+                        preview.appendChild(img);
+                    });
+                })
+                .catch(error => console.error('Error fetching images:', error)); // 오류 처리
+        }
+    </script>
+</body>
+</html>
+
