@@ -11,9 +11,14 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+# 이미지 업로드 관련 설정
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'  # Path를 사용하여 디렉토리 생성
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -39,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'comment',
+    'media',
 ]
 
 MIDDLEWARE = [

@@ -15,8 +15,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from django.views.generic import RedirectView  # 리다이렉트 뷰를 추가
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include('media.urls')), #이것도 프론트엔드를 위함
+    path('api/', include('media.urls')),
+    path('', RedirectView.as_view(url='/api/', permanent=False)),  # 루트 URL을 api/로 리다이렉트
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
