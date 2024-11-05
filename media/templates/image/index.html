@@ -4,29 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Gallery</title>
-    {% load static %}  <!-- static 태그 로드 -->
-    <script src="{% static 'image/script.js' %}"></script> <!-- script.js 경로 -->
+    {% load static %}
+    <script src="{% static 'image/script.js' %}"></script>
+    <style>
+        img {
+            display: block;  /* 이미지를 블록 요소로 만들어 겹치지 않게 함 */
+            margin: 10px auto;  /* 중앙 정렬 */
+            width: 200px; /* 이미지 크기 조절 */
+        }
+        .project-detail {
+            margin: 20px;  /* 프로젝트 세부 정보 간격 */
+            padding: 10px;
+            border: 1px solid #ccc;  /* 테두리 추가 */
+        }
+    </style>
 </head>
 <body>
     <h1>Image Gallery</h1>
-    <div id="image-container"></div> <!-- 이미지가 표시될 곳 -->
+    <div id="image-container"></div>
+
     <script>
-        // 페이지 로드 시 이미지를 가져오는 함수
+        async function fetchImages() {
+            const response = await fetch('http://127.0.0.1:8000/api/images/');
+            const data = await response.json();
+            displayImages(data);
+        }
+    
+        function displayImages(images) {
+            const preview = document.getElementById('image-container');
+            const filteredImages = images.filter(image => [4,5,6,7,8,9,10,11,13,14 ].includes(image.id));
+            filteredImages.forEach(image => {
+                const imageDiv = document.createElement('div'); // 이미지와 관련 정보를 그룹화할 div 생성
+                const img = document.createElement('img');
+                img.src = `http://127.0.0.1:8000${image.image}`;  // 이미지 URL 완성
+                imageDiv.appendChild(img);
+    
+                if (image.team) {
+                    const teamInfo = document.createElement('p');
+                    teamInfo.textContent = `Project: ${image.team.project_name}, Team: ${image.team.team_name}`;
+                    imageDiv.appendChild(teamInfo);
+    
+                    if (image.team.members) {
+                        const membersInfo = document.createElement('p');
+                        membersInfo.textContent = `Members: ${JSON.stringify(image.team.members)}`;
+                        imageDiv.appendChild(membersInfo);
+                    }
+
+
+                    //---------세부 사항----------
+                    // 프로젝트 세부 정보를 가져와서 표시
+                    fetchProjectDetails(image.id, imageDiv); // 이미지 ID를 인자로 넘김
+                //------------------------------------------------
+                }
+
+                preview.appendChild(imageDiv); // 각 이미지를 포함한 div를 컨테이너에 추가
+            });
+        }
+
+
+        // 세부사항을 가져오는 함수------------------------
+        async function fetchProjectDetails(imageId, container) {
+            const teamId = imageId + 5; // 팀 ID 계산
+            const response = await fetch(`http://127.0.0.1:8000/api/project-detail/${teamId}/`);
+            const data = await response.json();
+            displayProjectDetails(data, container);
+        }
+    
+        function displayProjectDetails(data, container) {
+            const projectDetailDiv = document.createElement('div');
+            projectDetailDiv.classList.add('project-detail');
+            
+            projectDetailDiv.innerHTML = `
+                <h2>Project Detail</h2>
+                <p><strong>Project Intro:</strong> ${data.project_intro}</p>
+                <p><strong>Design Intent:</strong> ${data.design_intent}</p>
+            `;
+            container.appendChild(projectDetailDiv); // 관련된 이미지 div 아래에 세부 정보 추가
+        }
+        //--------------------------------------------
+
+
         window.onload = function() {
-            fetch('http://127.0.0.1:8000/api/images/')
-                .then(response => response.json())
-                .then(data => {
-                    const preview = document.getElementById('image-container');
-                    data.forEach(image => {
-                        const img = document.createElement('img');
-                        img.src = image.image; // DRF에서 받은 이미지 URL
-                        img.style.width = '200px'; // 이미지 크기 조절
-                        preview.appendChild(img);
-                    });
-                })
-                .catch(error => console.error('Error fetching images:', error)); // 오류 처리
+            fetchImages();
         }
     </script>
 </body>
 </html>
-
