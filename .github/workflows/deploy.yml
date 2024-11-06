@@ -28,11 +28,9 @@ jobs:
       
       - name: Configure SSH Key
         run: |
-          # ~/.ssh 디렉토리를 생성하고 SSH 키를 파일로 저장
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-
       
       - name: Deploy to EC2
         env:
@@ -42,10 +40,11 @@ jobs:
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
             cd /home/ubuntu/Click_BE
             git pull origin main
-            source venv/bin/activate 
+            source venv/bin/activate
             pip install -r requirements.txt
             python manage.py migrate
             python manage.py collectstatic --noinput
             uwsgi --ini uwsgi.ini
-            sudo systemctl restart nginx 
+            sudo systemctl restart nginx
           EOF
+
