@@ -19,6 +19,7 @@ from django.urls import path, include
 from django.views.generic import RedirectView  # 리다이렉트 뷰를 추가
 from django.conf import settings
 from django.conf.urls.static import static
+from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,4 +27,5 @@ urlpatterns = [
     path('api/', include('media.urls')),
     path('', RedirectView.as_view(url='/api/', permanent=False)),  # 루트 URL을 api/로 리다이렉트
     path('comment/', include('comment.urls')),
+    path('health/', views.health_check, name='health_check'),
 ]
