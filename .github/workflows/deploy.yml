@@ -25,15 +25,20 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: ap-northeast-2  # 리전은 EC2 인스턴스에 맞게 설정
-
+      
+      - name: Configure SSH Key
+        run: |
+          # SSH 키를 파일로 저장하고 권한을 설정
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+      
       - name: Deploy to EC2
         env:
-          SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
-          EC2_USER: "ubuntu"
+          EC2_USER: ubuntu
           EC2_HOST: ${{ secrets.EC2_HOST }}
         run: |
-          ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
-            cd Click_BE 
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
+            cd /home/ubuntu/Click_BE
             git pull origin main
             source venv/bin/activate 
             pip install -r requirements.txt
