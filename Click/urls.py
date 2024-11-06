@@ -26,4 +26,6 @@ urlpatterns = [
     path('api/', include('media.urls')),
     path('', RedirectView.as_view(url='/api/', permanent=False)),  # 루트 URL을 api/로 리다이렉트
     path('comment/', include('comment.urls')),
+    path('health/', views.health_check, name='health_check'),
+    
 ]
