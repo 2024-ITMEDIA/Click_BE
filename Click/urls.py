@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView  # 리다이렉트 뷰를 추가
 from django.conf import settings
+from . import views  # views 모듈 임포트
 from django.conf.urls.static import static
 
 urlpatterns = [
