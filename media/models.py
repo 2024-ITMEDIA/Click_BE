@@ -19,6 +19,7 @@ class ProjectDetail(models.Model):
     def __str__(self):
         return f"ProjectDetail - {self.team.team_name}"  # 팀 이름을 포함하여 출력
     
+
 class ProjectImage(models.Model):
     project_detail = models.ForeignKey(ProjectDetail, on_delete=models.CASCADE, related_name='project_images')
     image = models.ImageField(upload_to='project_images/')
