@@ -1,17 +1,10 @@
 # media/urls.py
-from django.conf import settings
-from django.conf.urls.static import static
 from django.urls import path
-from .views import ImageCreateView, index,  ImageListView, ImageUploadView, ProjectDetailView
+from .views import ImageUploadView, ImageListView, ProjectListView, ProjectDetailView
 
-# Click_BE/urls.py
 urlpatterns = [
-    path('', index, name='index'), #프론트엔드를 위해 씀
-    path('images/', ImageCreateView.as_view(), name='image-create'),
-    path('api/images/', ImageListView.as_view(), name='image-list'),
-    path('api/images/upload/', ImageUploadView.as_view(), name='image-upload'),
-    path('api/project-detail/<int:team_id>/', ProjectDetailView.as_view(), name='project-detail'),  # 새로운 URL 추가
+    path('images/upload/', ImageUploadView.as_view(), name='image-upload'),# 이미지 업로드
+    path('images/', ImageListView.as_view(), name='image-list'), # 이미지 목록 보기
+    path('projects/', ProjectListView.as_view(), name='project-list'),# 프로젝트 목록 보기 (프로젝트 이름, 팀명, 팀원만 포함)
+    path('project-detail/<int:project_id>/', ProjectDetailView.as_view(), name='project-detail'), # 프로젝트 상세보기 (프로젝트의 작품 소개, 기획 의도, 팀명, 팀 이미지 등 포함)
 ]
-
-if settings.DEBUG:  # DEBUG가 True일 때만 미디어 파일 제공
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

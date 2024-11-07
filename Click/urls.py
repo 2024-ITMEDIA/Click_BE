@@ -22,8 +22,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('media.urls')), #이것도 프론트엔드를 위함
     path('api/', include('media.urls')),
     path('', RedirectView.as_view(url='/api/', permanent=False)),  # 루트 URL을 api/로 리다이렉트
     path('comment/', include('comment.urls')),
+    path('api/', RedirectView.as_view(url='/api/projects/', permanent=False)),  # 수정된 부분
 ]
