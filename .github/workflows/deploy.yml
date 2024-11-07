@@ -50,6 +50,7 @@ jobs:
             pip install -r requirements.txt
             
             # Run migrations without admin
+            python manage.py makemigrations
             python manage.py migrate
             
             # Uncomment admin URL and admin app
