@@ -18,14 +18,16 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView  # 리다이렉트 뷰를 추가
 from django.conf import settings
+from . import views  # views 모듈 임포트
 from django.conf.urls.static import static
 from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('media.urls')), #이것도 프론트엔드를 위함
     path('api/', include('media.urls')),
     path('', RedirectView.as_view(url='/api/', permanent=False)),  # 루트 URL을 api/로 리다이렉트
     path('comment/', include('comment.urls')),
     path('health/', views.health_check, name='health_check'),
+    
+    path('api/', RedirectView.as_view(url='/api/projects/', permanent=False)),  # 수정된 부분
 ]

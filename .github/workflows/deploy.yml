@@ -29,9 +29,10 @@ jobs:
       - name: Configure SSH Key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_KEY_BASE64 }}" | base64 -d > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-      
+
+
       - name: Deploy to EC2
         env:
           EC2_USER: ubuntu
@@ -40,11 +41,27 @@ jobs:
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
             cd /home/ubuntu/Click_BE
             git pull origin main
+            
+            # Comment out admin URL and admin app
+            sed -i 's/path("admin/", admin.site.urls)/#path("admin/", admin.site.urls)/' ./project_folder/urls.py
+            sed -i 's/"django.contrib.admin",/#"django.contrib.admin",/' ./project_folder/settings.py
+
             source venv/bin/activate
             pip install -r requirements.txt
+            
+            # Run migrations without admin
+            python manage.py makemigrations
             python manage.py migrate
+            
+            # Uncomment admin URL and admin app
+            sed -i 's/#path("admin/", admin.site.urls)/path("admin/", admin.site.urls)/' ./project_folder/urls.py
+            sed -i 's/#"django.contrib.admin",/"django.contrib.admin",/' ./project_folder/settings.py
+
+            # Run migrations again with admin
+            python manage.py migrate
+
+            # Collect static files and restart the application
             python manage.py collectstatic --noinput
             uwsgi --ini uwsgi.ini
             sudo systemctl restart nginx
           EOF
-
