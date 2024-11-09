@@ -5,4 +5,4 @@ from .models import Team, ProjectDetail, TeamImage, Image
 admin.site.register(Team)
 admin.site.register(ProjectDetail)
 admin.site.register(TeamImage)
-#admin.site.register(Image)
+admin.site.register(Image)
